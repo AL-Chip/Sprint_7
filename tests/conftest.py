@@ -1,13 +1,14 @@
 import pytest
 import requests
-from config import URL, ENDPOINT_COURIER_CREATING, ENDPOINT_LOGIN
-from helpers import get_payload
+from config import URL, ENDPOINT_COURIER_CREATING, ENDPOINT_LOGIN, ENDPOINT_ORDER
+from helpers import get_payload_courier, get_payload_order
+import json
 
 
 @pytest.fixture
 def courier_create():
     login_pass = []
-    payload = get_payload()
+    payload = get_payload_courier()
     response = requests.post(f"{URL}{ENDPOINT_COURIER_CREATING}", data=payload)
     if response.status_code == 201:
         login_pass.append(payload["login"])
@@ -24,3 +25,13 @@ def courier_login(courier_create):
     }
     response_login = requests.post(f"{URL}{ENDPOINT_LOGIN}", data=payload)
     return response_login
+
+
+@pytest.fixture
+def create_order():
+    payload = get_payload_order()
+    payload_json = json.dumps(payload)
+    response = requests.post(f"{URL}{ENDPOINT_ORDER}", data=payload_json)
+    return response
+
+
